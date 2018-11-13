@@ -1,8 +1,81 @@
-
-import { AsyncStorage } from "react-native";
+import {AsyncStorage} from "react-native";
+import {base_url} from "./config";
+import {messaging} from "react-native-firebase";
+import DeviceInfo from "react-native-device-info";
 
 export const USER_KEY = "auth-demo-key";
-let base_url = 'http://192.168.0.103:8000'
+
+async function requestPushNotificationPermissions() {
+  try {
+    await messaging().requestPermission();
+    console.log('fcm user has authorised')
+// User has authorised
+  } catch (error) {
+    // User has rejected permissions
+    console.log('fcm User has rejected permissions')
+  }
+}
+
+
+function getDeviceStats() {
+  let isEmulator = DeviceInfo.isEmulator(); // false
+  console.log('is emuu' , isEmulator)
+  let res = {
+    brand: DeviceInfo.getBrand(),
+    build_number: DeviceInfo.getBuildNumber(),
+    device_id: DeviceInfo.getDeviceId(),
+    unique_id: DeviceInfo.getUniqueID(),
+    device_name: DeviceInfo.getDeviceName(),
+    mac_address: DeviceInfo.getMACAddress(),
+  };
+  console.log('res info', res)
+  return res
+
+}
+
+async function send_fcm_token_to_api(fcmToken) {
+  let token = await AsyncStorage.getItem(USER_KEY)
+
+
+  try {
+    let response = await fetch(base_url + '/user/fcm-token/', {
+      method: 'PUT',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': 'Token ' + token,
+
+      },
+      body: JSON.stringify({
+        fcm_token: fcmToken,
+        ...getDeviceStats()
+      }),
+    });
+  } catch (e) {
+    console.log('failed to upload fcm_token to api backend', e)
+  }
+}
+
+async function registerForPushNotifications() {
+  const fcmToken = await messaging().getToken();
+  if (fcmToken) {
+    await AsyncStorage.setItem('fcm-token', fcmToken);
+
+    console.log('fcmToken got, sending it to backend', fcmToken)
+    await send_fcm_token_to_api(fcmToken);
+  } else {
+    await AsyncStorage.setItem('not-fcm-token', fcmToken);
+  }
+  const enabled = await messaging().hasPermission();
+  if (enabled) {
+    console.log('fcmToken user has permissions')
+
+  } else {
+    console.log('fcmToken user has no permissions')
+
+    await requestPushNotificationPermissions();
+  }
+}
 
 export async function onSignIn(username, password) {
 
@@ -20,7 +93,9 @@ export async function onSignIn(username, password) {
     });
     let data = await response.json()
     if (data.token) {
-    await AsyncStorage.setItem(USER_KEY, data.token);
+      console.log('login success, registering for apn')
+      await AsyncStorage.setItem(USER_KEY, data.token);
+      await registerForPushNotifications()
       return true
     }
     else {

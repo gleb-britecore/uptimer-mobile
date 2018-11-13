@@ -7,6 +7,8 @@
  */
 
 import React, {Component} from 'react';
+import ReactotronConfig from './src/ReactotronConfig'
+
 import {Platform, StyleSheet, Text, View} from 'react-native';
 import { StackNavigator } from 'react-navigation';
 import FeedsList from './src/FeedsList.js';
@@ -34,6 +36,7 @@ import store from './src/store';
 import {createRootNavigator, SignedIn, SignedOut} from "./src/router";
 
 import { isSignedIn } from "./src/auth";
+import {notifications} from "react-native-firebase";
 
 export default class App extends React.Component {
   constructor(props) {
@@ -49,6 +52,25 @@ export default class App extends React.Component {
     isSignedIn()
         .then(res => this.setState({ signedIn: res, checkedSignIn: true }))
         .catch(err => alert("An error occurred"));
+
+
+    this.notificationListener = notifications().onNotification((notification) => {
+
+      // Process your notification as required
+      const {
+        body,
+        data,
+        notificationId,
+        sound,
+        subtitle,
+        title
+      } = notification;
+      console.log("LOG my fcm: ", title, body, JSON.stringify(data))
+    });
+  }
+
+  componentWillUnmount() {
+    this.notificationListener();
   }
 
   render() {

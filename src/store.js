@@ -2,17 +2,18 @@
 import {observable} from 'mobx';
 import {AsyncStorage} from "react-native";
 import {USER_KEY} from "./auth";
+import {base_url} from "./config";
 
-let base_url = 'http://192.168.0.103:8000'
 
 class Store {
   @observable sites;
+  @observable loading_sites;
 
   constructor() {
     this.sites = [
-        {site_url: 'http://a.com'},
-        {site_url: 'http://b.com'},
+        {site_url: 'dummy_1'},
         ];
+    this.loading_sites = false
   }
   addSite(site) {
     this.sites.push(
@@ -20,6 +21,8 @@ class Store {
     );
     // this._persistFeeds();
   }
+
+
 
 }
 const store = new Store()
@@ -44,6 +47,42 @@ export async function loadSites() {
   await data.forEach((_) => {
     store.addSite(_)
   })
+
+}
+
+
+export async function addSite(site_url) {
+
+  let token = await AsyncStorage.getItem(USER_KEY)
+  let response = await fetch(base_url + '/sites/', {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Authorization': 'Token ' + token,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      site_url: site_url,
+    }),
+  });
+  // let data = await response.json()
+  await loadSites()
+
+}
+
+
+export async function deleteSite(self_link) {
+
+  let token = await AsyncStorage.getItem(USER_KEY)
+  let response = await fetch(self_link, {
+    method: 'DELETE',
+    headers: {
+      Accept: 'application/json',
+      'Authorization': 'Token ' + token,
+    },
+  });
+  console.log(response.status)
+  await loadSites()
 
 }
 

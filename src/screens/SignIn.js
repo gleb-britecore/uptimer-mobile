@@ -30,7 +30,9 @@ export default class SignIn extends React.Component {
             <FormInput
                 placeholder="Email address..."
                 onChangeText={(username) => this.setState({username})}
-                value={this.state.text}
+                autoCapitalize='none'
+
+                value={this.state.username}
             />
             <FormLabel>Password</FormLabel>
             <FormInput

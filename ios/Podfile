@@ -1,0 +1,36 @@
+# Uncomment the next line to define a global platform for your project
+platform :ios, '9.0'
+pod 'Firebase/Core'
+pod 'Firebase/Messaging'
+
+
+target 'uptimer' do
+  # Uncomment the next line if you're using Swift or would like to use dynamic frameworks
+  # use_frameworks!
+
+  # Pods for uptimer
+  pod 'Firebase/Core'
+  pod 'Firebase/Messaging'
+
+
+
+
+  target 'uptimerTests' do
+    inherit! :search_paths
+    # Pods for testing
+  end
+
+end
+
+target 'uptimer-tvOS' do
+  # Uncomment the next line if you're using Swift or would like to use dynamic frameworks
+  # use_frameworks!
+
+  # Pods for uptimer-tvOS
+
+  target 'uptimer-tvOSTests' do
+    inherit! :search_paths
+    # Pods for testing
+  end
+
+end

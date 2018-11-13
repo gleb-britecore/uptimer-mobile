@@ -7,7 +7,10 @@ export default ({ navigation }) => (
     <View style={{ paddingVertical: 20 }}>
       <Card title="SIGN UP">
         <FormLabel>Email</FormLabel>
-        <FormInput placeholder="Email address..." />
+        <FormInput
+            autoCapitalize='none'
+
+            placeholder="Email address..." />
         <FormLabel>Password</FormLabel>
         <FormInput secureTextEntry placeholder="Password..." />
         <FormLabel>Confirm Password</FormLabel>

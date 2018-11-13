@@ -29,11 +29,17 @@ export const SignedOut = createStackNavigator({
 });
 
 
+// import { createStackNavigator } from 'react-navigation'
+import AddSite from './screens/AddSite';
 
+const HomeNavStack = createStackNavigator({
+  Home,
+  AddSite
+});
 
 export const SignedIn = createBottomTabNavigator({
   Home: {
-    screen: Home,
+    screen: HomeNavStack,
     navigationOptions: {
       tabBarLabel: "Home",
       tabBarIcon: ({ tintColor }) => (
