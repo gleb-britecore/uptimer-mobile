@@ -49,7 +49,7 @@ export default class SignIn extends React.Component {
                 backgroundColor="transparent"
                 textStyle={{color: "#bcbec1"}}
                 title="Create new account"
-                onPress={() => navigation.navigate("SignUp")}
+                onPress={() => this.props.navigation.navigate("SignUp")}
             />
             <FormLabel>{this.state.error}</FormLabel>
 
