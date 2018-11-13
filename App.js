@@ -13,7 +13,6 @@ import FeedsList from './src/FeedsList.js';
 // import FeedDetail from './screens/FeedDetail.js';
 // import EntryDetail from './screens/EntryDetail.js';
 // import AddFeed from './screens/AddFeed.js';
-// import store from './src/store';
 // const Navigator = StackNavigator({
 //   FeedsList: { screen: FeedsList },
 //   // FeedDetail: { screen: FeedDetail },
@@ -29,6 +28,7 @@ import FeedsList from './src/FeedsList.js';
 //   }
 // }
 
+import store from './src/store';
 
 
 import {createRootNavigator, SignedIn, SignedOut} from "./src/router";
@@ -60,6 +60,6 @@ export default class App extends React.Component {
     }
 
     const Layout = createRootNavigator(signedIn);
-    return <Layout />;
+    return <Layout screenProps={{ store }} />;
   }
 }
